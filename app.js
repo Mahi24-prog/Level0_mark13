@@ -17,20 +17,20 @@ function datetoString(date){
     let day = "";
     let month = "";
     let year = "";
-
-    if(date.day < 10){
+    if(date.day < 10 && date.day.length != 2){
         day = "0"+date.day;
     }
     else{
-        day =  date.day+"";
+        day =  date.day.toString();
     }
 
-    if(date.month < 10){
+    if(date.month < 10 && date.month.length != 2){
         month = "0"+date.month;
     }else{
         month = date.month.toString();
     }
 
+  
     year = date.year.toString();
 
     return {day:day,month:month,year:year}
@@ -52,8 +52,9 @@ function dateAllFormat(date){
 
 function checkPlindromeForAllFormat(date){
     var dateFormatList = dateAllFormat(date)
+
     for(i of dateFormatList){
-        if(checkPlindrome(i) === true){
+        if(checkPlindrome(i)){
             return true;
         }
     } 
@@ -108,24 +109,27 @@ function findPreviousPalindromeDate(date){
 
     var daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
+
     while(1){
         day--;
-        count--;
+        count++;
         if (checkLeapYear(year)){
             daysInMonth[1] = 29;
         }
         
         if (day < 1){
-            day = daysInMonth[month-2];
             month -=1;
+            day = daysInMonth[month-1];
         }
         if(month < 1){
             month = 12;
+            day = daysInMonth[month-1];
             year -=1;
         }
         if(checkPlindromeForAllFormat({day:day,month:month,year:year})){
             return([count, {day:day,month:month,year:year}]);    
         }
+       
     }
     return false
 }
@@ -142,16 +146,19 @@ function clickHandler(){
     let nextDate = [];
     let prevDate = [];
 
+    console.log(findNextPalindromeDate(date)[0]);
+    console.log(findPreviousPalindromeDate(date)[0]);
 
     if(checkPlindromeForAllFormat(date)){
         result.innerText = "Yay! Your birthday is palindrome!";
-    }else if(findNextPalindromeDate(date)[0] < Math.abs(findPreviousPalindromeDate(date)[0])){
+    }else if(findNextPalindromeDate(date)[0] < findPreviousPalindromeDate(date)[0]){
         nextDate = findNextPalindromeDate(date);
         result.innerText = `The nearest palindrome date is ${nextDate[1].day}- ${nextDate[1].month}- ${nextDate[1].year}, you missed by ${nextDate[0]} days.`
     }else{
         prevDate = findPreviousPalindromeDate(date);
-        result.innerText = `The nearest palindrome date is ${prevDate[1].day}- ${prevDate[1].month}- ${prevDate[1].year}, you missed by ${Math.abs(prevDate[0])} days.`
+        result.innerText = `The nearest palindrome date is ${prevDate[1].day}- ${prevDate[1].month}- ${prevDate[1].year}, you missed by ${prevDate[0]} days.`
     }
+    
 }
 
 
